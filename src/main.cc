@@ -5,7 +5,7 @@
 #include "ini-parser.hh"
 #include <iostream>
 
-int main(void) {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   ini::parser ini_file = ini::parser("sample.ini");
 
   return 0;

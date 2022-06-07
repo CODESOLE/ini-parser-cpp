@@ -23,7 +23,8 @@ public:
 
 private:
   std::ifstream input_file;
-  inline bool check_file_extension(const std::string &file);
+  [[nodiscard("You have to check file extension!")]] constexpr inline bool
+  check_file_extension(const std::string &file);
 };
 
 } // namespace ini

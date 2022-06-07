@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "ini-parser.hh"
-#include <memory>
 #include <iostream>
+#include <memory>
 
 using ini::parser;
 
-inline bool parser::check_file_extension(const std::string &file) {
+constexpr inline bool parser::check_file_extension(const std::string &file) {
   return file.ends_with(".ini");
 }
 

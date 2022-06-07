@@ -1,6 +1,5 @@
 workspace "ini-parser-cpp"
   configurations { "Debug", "Release" }
-  platforms { "x64" }
   location "build"
 
 project "ini-parser-cpp"

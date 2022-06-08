@@ -20,7 +20,6 @@ class parser {
 public:
   parser() = delete;
   explicit parser(const std::string &in_file);
-  explicit parser(const std::string &&in_file);
   parser(parser &&) = delete;
   parser(const parser &) = delete;
   parser &operator=(parser &&) = delete;

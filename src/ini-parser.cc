@@ -34,30 +34,19 @@ parser::parser(const std::string &in_file)
   }
 }
 
-parser::parser(const std::string &&in_file)
-    : _file_data(std::filesystem::file_size(in_file), '0') {
-  try {
-    if (check_file_extension(std::move(in_file)) == true)
-      this->_input_file.open(in_file, std::ios::in);
-    else
-      throw std::runtime_error("File should be ended with .ini extension");
-
-    std::filesystem::path file_path(in_file);
-    if (std::filesystem::exists(file_path) != true &&
-        std::filesystem::is_regular_file(file_path) != true)
-      throw std::runtime_error("File not exist or not regular file!");
-
-    this->_input_file.read(_file_data.data(),
-                           std::filesystem::file_size(in_file));
-  } catch (std::runtime_error &e) {
-    std::cerr << e.what() << std::endl;
-  }
-}
-
-// static enum class
-
 std::unique_ptr<parsed_data> parse_ini(comment_char comment_token) {
-  char comm_token = static_cast<bool>(comment_token) ? ';' : '#';
+  [[maybe_unused]] char comm_token;
+
+  switch (comment_token) {
+  case ini::comment_char::HASH_TAG:
+    comm_token = '#';
+    break;
+  case ini::comment_char::SEMI_COL:
+    comm_token = ';';
+    break;
+  default:
+    comm_token = ';';
+  }
   std::unique_ptr<parsed_data> parsed = std::make_unique<parsed_data>();
   return parsed;
 }

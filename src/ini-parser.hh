@@ -19,7 +19,7 @@ using parsed_data =
 class parser {
 public:
   parser() = delete;
-  explicit parser(const std::string &in_file);
+  explicit parser(const std::string_view &in_file);
   parser(parser &&) = delete;
   parser(const parser &) = delete;
   parser &operator=(parser &&) = delete;
@@ -33,8 +33,8 @@ private:
   std::ifstream _input_file;
   std::string _file_data;
   std::unique_ptr<parsed_data> _parsed_data = nullptr;
-  [[nodiscard("You have to check file extension!")]] constexpr inline bool
-  check_file_extension(const std::string &file);
+  [[nodiscard("You have to check file extension!")]] inline bool
+  check_file_extension(const std::string_view &file);
 };
 
 } // namespace ini

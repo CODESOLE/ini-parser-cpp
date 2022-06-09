@@ -8,17 +8,17 @@
 
 using namespace ini;
 
-constexpr inline bool parser::check_file_extension(const std::string &file) {
+inline bool parser::check_file_extension(const std::string_view &file) {
   return file.ends_with(".ini");
 }
 
 void parser::print_raw_string() const { std::cout << _file_data << std::endl; }
 
-parser::parser(const std::string &in_file)
+parser::parser(const std::string_view &in_file)
     : _file_data(std::filesystem::file_size(in_file), '0') {
   try {
-    if (check_file_extension(in_file) == true)
-      this->_input_file.open(in_file, std::ios::in);
+    if (check_file_extension(in_file))
+      this->_input_file.open(in_file.data(), std::ios::in);
     else
       throw std::runtime_error("File should be ended with .ini extension");
 

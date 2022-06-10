@@ -27,7 +27,7 @@ public:
   ~parser() = default;
 
   void print_raw_string(void) const;
-  std::unique_ptr<parsed_data> parse_ini(comment_char comment_token);
+  void parse_ini(comment_char comment_token);
 
 private:
   std::ifstream _input_file;

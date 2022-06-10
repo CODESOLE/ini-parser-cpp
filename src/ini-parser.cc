@@ -34,9 +34,8 @@ parser::parser(const std::string_view &in_file)
   }
 }
 
-std::unique_ptr<parsed_data> parse_ini(comment_char comment_token) {
+void parse_ini(comment_char comment_token = comment_char::SEMI_COL) {
   [[maybe_unused]] char comm_token;
-
   switch (comment_token) {
   case ini::comment_char::HASH_TAG:
     comm_token = '#';
@@ -47,6 +46,5 @@ std::unique_ptr<parsed_data> parse_ini(comment_char comment_token) {
   default:
     comm_token = ';';
   }
-  std::unique_ptr<parsed_data> parsed = std::make_unique<parsed_data>();
-  return parsed;
+  parsed_data parsed{};
 }

@@ -34,7 +34,7 @@ parser::parser(const std::string_view &in_file)
   }
 }
 
-void parse_ini(comment_char comment_token = comment_char::SEMI_COL) {
+void parser::parse_ini(comment_char comment_token = comment_char::SEMI_COL) {
   [[maybe_unused]] char comm_token;
   switch (comment_token) {
   case ini::comment_char::HASH_TAG:

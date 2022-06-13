@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <optional>
 #include <unordered_map>
 
 namespace ini {
@@ -27,29 +28,49 @@ public:
   parser &operator=(const parser &) = delete;
   ~parser() = default;
 
-  inline void print_raw_string(void) const;
-  inline const std::string &get_raw_string(void) const;
+  inline void print_raw_string(void) const noexcept;
+  inline const std::string &get_raw_string(void) const noexcept;
   void parse_ini(comment_char comment_token);
+  void pretty_print(void) const noexcept;
+  void write_to_file(const std::string &filename);
+
   [[nodiscard("Parsed data should be used!")]] inline const parsed_data &
-  get_parsed_data(void) const;
+  get_parsed_data(void) const noexcept;
+
+  [[nodiscard("Parsed data should be used!")]] inline parsed_data &
+  get_parsed_data(void) noexcept;
+
+  [[nodiscard("Section should be used!")]] const std::optional<
+      std::reference_wrapper<
+          const std::unordered_map<std::string, std::string>>>
+  get_properties_of_section(const std::string &section_name) const;
+
+  [[nodiscard("Section should be used!")]] std::optional<
+      std::reference_wrapper<std::unordered_map<std::string, std::string>>>
+  get_properties_of_section(const std::string &section_name);
 
 private:
   std::ifstream _input_file;
   std::string _file_data;
-  std::unique_ptr<parsed_data> _parsed_data = nullptr;
+  std::uint16_t longest_key_width; // for pretty_print function to adjust width.
+  std::unique_ptr<parsed_data> _parsed_data;
   [[nodiscard("You have to check file extension!")]] inline bool
   check_file_extension(const std::string_view &file);
 };
 
-inline void parser::print_raw_string() const {
+inline void parser::print_raw_string() const noexcept {
   std::cout << _file_data << std::endl;
 }
 
-inline const parsed_data &parser::get_parsed_data(void) const {
+inline const parsed_data &parser::get_parsed_data(void) const noexcept {
   return *this->_parsed_data;
 }
 
-inline const std::string &parser::get_raw_string(void) const {
+inline parsed_data &parser::get_parsed_data(void) noexcept {
+  return *this->_parsed_data;
+}
+
+inline const std::string &parser::get_raw_string(void) const noexcept {
   return _file_data;
 }
 

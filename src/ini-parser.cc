@@ -5,7 +5,6 @@
 #include "ini-parser.hh"
 #include <algorithm>
 #include <filesystem>
-#include <regex>
 
 using namespace ini;
 
@@ -14,7 +13,8 @@ inline bool parser::check_file_extension(const std::string_view &file) {
 }
 
 parser::parser(const std::string_view &in_file)
-    : _file_data(std::filesystem::file_size(in_file), '0') {
+    : _file_data(std::filesystem::file_size(in_file), '0'),
+      longest_key_width(0), _parsed_data(nullptr) {
   try {
     if (check_file_extension(in_file))
       this->_input_file.open(in_file.data(), std::ios::in);
@@ -48,38 +48,47 @@ static void trim_line(std::string &line) {
              line.end());
 }
 
-static void get_section(std::string line, parsed_data &pd) {
-  if (std::smatch sm;
-      regex_search(line, sm, std::regex(R"(\[[^\]]*\])")) && sm.size() == 1) {
+static inline void get_section(std::string line, parsed_data &pd) {
+  if (*line.begin() == '[' && *(line.end() - 1) == ']') {
     is_root = false;
-    for (auto elm : sm) {
-      curr_section = std::string(elm.str().begin() + 1, elm.str().end() - 1);
-      pd[curr_section] = {{}, {}};
+    curr_section = std::string(line.begin() + 1, line.end() - 1);
+    if (pd.contains(curr_section)) {
+      std::cerr << "WARN: " << curr_section
+                << " is exist in section list! Skipping\n";
+      return;
     }
+    trim_line(curr_section);
   }
 }
 
-static void get_property(std::string line, parsed_data &pd) {
-  if (std::smatch sm;
-      regex_search(line, sm, std::regex(R"(^.*=.*$)")) && sm.size() == 1) {
-    std::string spair[2];
-    for (auto &elm : sm) {
-      std::string::size_type pos = 0;
-      std::string token = elm.str();
-      while ((pos = token.find("=")) != std::string::npos) {
-        trim_line(token);
-        spair[0] = token.substr(0, pos);
-        token.erase(0, pos + 1);
+static std::optional<std::uint16_t> get_property(std::string line,
+                                                 parsed_data &pd) {
+  std::string::size_type equal_symbol = line.find("=");
+
+  if (equal_symbol != std::string::npos) {
+    std::string key = std::string(line.begin(), line.begin() + equal_symbol);
+    trim_line(key);
+    std::string val = std::string(line.begin() + equal_symbol + 1, line.end());
+    trim_line(val);
+    if (is_root) {
+      if (pd["root"].contains(key)) {
+        std::cerr << "WARN: " << key
+                  << " is exist in [root] section! Skipping\n";
+        return {};
       }
-      trim_line(token);
-      spair[1] = token;
-      if (is_root) {
-        pd["root"].insert(std::make_pair(spair[0], spair[1]));
-      } else {
-        pd[curr_section].insert(std::make_pair(spair[0], spair[1]));
+      pd["root"][key] = val;
+      return key.size();
+    } else {
+      if (pd[curr_section].contains(key)) {
+        std::cerr << "WARN: " << key << " is exist in [" << curr_section
+                  << "] section! Skipping\n";
+        return {};
       }
+      pd[curr_section][key] = val;
+      return key.size();
     }
   }
+  return {};
 }
 
 void parser::parse_ini(comment_char comment_token = comment_char::SEMI_COL) {
@@ -107,9 +116,57 @@ void parser::parse_ini(comment_char comment_token = comment_char::SEMI_COL) {
     }
 
     trim_line(line);
-
     get_section(line, parsed);
-    get_property(line, parsed);
+
+    std::optional<std::uint16_t> key_sz = get_property(line, parsed);
+    if (key_sz.has_value() && key_sz > this->longest_key_width)
+      this->longest_key_width = key_sz.value();
   }
   this->_parsed_data = std::make_unique<parsed_data>(parsed);
+  is_root = true;
+  curr_section.clear();
+}
+
+const std::optional<
+    std::reference_wrapper<const std::unordered_map<std::string, std::string>>>
+parser::get_properties_of_section(const std::string &section_name) const {
+  for (auto &[sections, properties] : *this->_parsed_data) {
+    if (sections == section_name)
+      return this->get_parsed_data().at(section_name);
+  }
+  return {};
+}
+
+std::optional<
+    std::reference_wrapper<std::unordered_map<std::string, std::string>>>
+parser::get_properties_of_section(const std::string &section_name) {
+  for (auto &[sections, properties] : *this->_parsed_data) {
+    if (sections == section_name)
+      return this->get_parsed_data().at(section_name);
+  }
+  return {};
+}
+
+void parser::pretty_print(void) const noexcept {
+  for (auto &[sections, properties] : *this->_parsed_data) {
+    std::cout << '[' << sections << ']' << std::endl;
+    for (auto &[key, val] : properties) {
+      std::cout << '\t' << std::setw(this->longest_key_width) << key << " = "
+                << val << std::endl;
+    }
+    std::cout << std::endl;
+  }
+}
+
+void parser::write_to_file(const std::string &filename) {
+  std::stringstream ss{};
+  std::ofstream out_file{filename};
+  for (auto &[sections, properties] : *this->_parsed_data) {
+    ss << '[' << sections << ']' << std::endl;
+    for (auto &[key, val] : properties) {
+      ss << key << " = " << val << std::endl;
+    }
+    ss << std::endl;
+  }
+  out_file << ss.rdbuf();
 }

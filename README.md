@@ -2,6 +2,12 @@
 ini parser written in C++20.
 You can find this example file in `example/main.cc`
 
+Same section will be merge with a warning written into a stderr (no same but seperate sections).
+
+Same keys inside same sections will be skipped with writing warning to stderr  (only the first occurence will be chosen, others skipped).
+
+However same keys in different sections are allowed.
+
 ```cpp
 #include "ini-parser.hh"
 

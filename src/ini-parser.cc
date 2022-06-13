@@ -12,6 +12,23 @@ inline bool parser::check_file_extension(const std::string_view &file) {
   return file.ends_with(".ini");
 }
 
+parser::parser(parser &&other)
+    : _input_file(std::move(other._input_file)),
+      _file_data(std::move(other._file_data)),
+      longest_key_width(other.longest_key_width),
+      _parsed_data(std::move(other._parsed_data)) {
+  other._parsed_data = nullptr;
+}
+
+parser &parser::operator=(parser &&other) {
+  this->_input_file = std::move(other._input_file);
+  this->_file_data = std::move(other._file_data);
+  this->longest_key_width = other.longest_key_width;
+  this->_parsed_data = std::move(other._parsed_data);
+  other._parsed_data = nullptr;
+  return *this;
+}
+
 parser::parser(const std::string_view &in_file)
     : _file_data(std::filesystem::file_size(in_file), '0'),
       longest_key_width(0), _parsed_data(nullptr) {

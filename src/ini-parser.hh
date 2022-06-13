@@ -22,9 +22,9 @@ class parser {
 public:
   parser() = delete;
   explicit parser(const std::string_view &in_file);
-  parser(parser &&) = delete;
+  parser(parser &&);
   parser(const parser &) = delete;
-  parser &operator=(parser &&) = delete;
+  parser &operator=(parser &&);
   parser &operator=(const parser &) = delete;
   ~parser() = default;
 

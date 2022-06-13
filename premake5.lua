@@ -9,7 +9,7 @@ project "ini-parser-cpp"
   warnings "Extra"
   targetname "ini-parser-cpp"
   targetdir "build"
-  prebuildcommands {"rm -rf tests", "cp -rf ../tests tests"}
+  prebuildcommands {"rm -rf tests", "cp -rf ../test test"}
   buildoptions { "-pedantic" }
   includedirs { "src" }
 

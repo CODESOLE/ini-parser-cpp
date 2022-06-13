@@ -2,8 +2,6 @@
 ini parser written in C++20.
 You can find this example file in `example/main.cc`
 
-https://img.shields.io/github/license/CODESOLE/ini-parser-cpp?label=License
-
 ```cpp
 #include "ini-parser.hh"
 

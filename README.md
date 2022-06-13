@@ -1,12 +1,13 @@
 # ini-parser-cpp
-ini parser written in C++20.
-You can find this example file in `example/main.cc`
+INI parser written in Modern C++20.
 
-Same sections will be merge with a warning written into a stderr.
+ - Same sections will be merge with a warning written into a stderr.
 
-Same keys inside same sections will be skipped with warning written into stderr (only the first occurence will be chosen, others skipped).
+ - Same keys inside same sections will be skipped with warning written into stderr (only the first occurence will be chosen, others skipped).
 
-However same keys in different sections are allowed.
+ - However same keys in different sections are allowed.
+
+You can find this example file in `example/main.cc`. This is the whole API.
 
 ```cpp
 #include "ini-parser.hh"

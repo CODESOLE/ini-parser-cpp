@@ -128,8 +128,9 @@ void parser::parse_ini(comment_char comment_token = comment_char::SEMI_COL) {
       if (line[idx - 1] != '\\') {
         line[idx] = '\0';
         line = std::string(line.c_str());
+      } else {
+        line.erase(std::remove(line.begin(), line.end(), '\\'), line.end());
       }
-      line.erase(std::remove(line.begin(), line.end(), '\\'), line.end());
     }
 
     trim_line(line);

@@ -21,7 +21,7 @@ using parsed_data =
 class parser {
 public:
   parser() = delete;
-  explicit parser(const std::string_view &in_file);
+  explicit parser(const std::string_view &in_file, comment_char comment_char);
   parser(parser &&);
   parser(const parser &) = delete;
   parser &operator=(parser &&);
@@ -30,9 +30,8 @@ public:
 
   inline void print_raw_string(void) const noexcept;
   inline const std::string &get_raw_string(void) const noexcept;
-  void parse_ini(comment_char comment_token);
   void pretty_print(void) const noexcept;
-  void write_to_file(const std::string &filename);
+  void write_to_file(const std::string &filename) const;
 
   [[nodiscard("Parsed data should be used!")]] inline const parsed_data &
   get_parsed_data(void) const noexcept;
@@ -54,7 +53,7 @@ private:
   std::string _file_data;
   std::uint16_t longest_key_width; // for pretty_print function to adjust width.
   std::unique_ptr<parsed_data> _parsed_data;
-  [[nodiscard("You have to check file extension!")]] inline bool
+  [[nodiscard("You have to check file extension!")]] static inline bool
   check_file_extension(const std::string_view &file);
 };
 

@@ -29,27 +29,6 @@ parser &parser::operator=(parser &&other) {
   return *this;
 }
 
-parser::parser(const std::string_view &in_file)
-    : _file_data(std::filesystem::file_size(in_file), '0'),
-      longest_key_width(0), _parsed_data(nullptr) {
-  try {
-    if (check_file_extension(in_file))
-      this->_input_file.open(in_file.data(), std::ios::in);
-    else
-      throw std::runtime_error("File should be ended with .ini extension");
-
-    std::filesystem::path file_path(in_file);
-    if (std::filesystem::exists(file_path) != true &&
-        std::filesystem::is_regular_file(file_path))
-      throw std::runtime_error("File not exist or not regular file!");
-
-    this->_input_file.read(_file_data.data(),
-                           std::filesystem::file_size(in_file));
-  } catch (std::runtime_error &e) {
-    std::cerr << e.what() << std::endl;
-  }
-}
-
 constinit bool is_root = true;
 
 static std::string curr_section{};
@@ -108,7 +87,47 @@ static std::optional<std::uint16_t> get_property(std::string line,
   return {};
 }
 
-void parser::parse_ini(comment_char comment_token = comment_char::SEMI_COL) {
+const std::optional<
+    std::reference_wrapper<const std::unordered_map<std::string, std::string>>>
+parser::get_properties_of_section(const std::string &section_name) const {
+  for (auto &[sections, properties] : *this->_parsed_data) {
+    if (sections == section_name)
+      return this->get_parsed_data().at(section_name);
+  }
+  return {};
+}
+
+std::optional<
+    std::reference_wrapper<std::unordered_map<std::string, std::string>>>
+parser::get_properties_of_section(const std::string &section_name) {
+  for (auto &[sections, properties] : *this->_parsed_data) {
+    if (sections == section_name)
+      return this->get_parsed_data().at(section_name);
+  }
+  return {};
+}
+
+parser::parser(const std::string_view &in_file,
+               comment_char comment_token = comment_char::SEMI_COL)
+    : _file_data(std::filesystem::file_size(in_file), '0'),
+      longest_key_width(0), _parsed_data(nullptr) {
+  try {
+    if (this->check_file_extension(in_file))
+      this->_input_file.open(in_file.data(), std::ios::in);
+    else
+      throw std::runtime_error("File should be ended with .ini extension");
+
+    std::filesystem::path file_path(in_file);
+    if (std::filesystem::exists(file_path) != true &&
+        std::filesystem::is_regular_file(file_path))
+      throw std::runtime_error("File not exist or not regular file!");
+
+    this->_input_file.read(_file_data.data(),
+                           std::filesystem::file_size(in_file));
+  } catch (std::runtime_error &e) {
+    std::cerr << e.what() << std::endl;
+  }
+
   char comm_token;
   switch (comment_token) {
   case ini::comment_char::HASH_TAG:
@@ -145,26 +164,6 @@ void parser::parse_ini(comment_char comment_token = comment_char::SEMI_COL) {
   curr_section.clear();
 }
 
-const std::optional<
-    std::reference_wrapper<const std::unordered_map<std::string, std::string>>>
-parser::get_properties_of_section(const std::string &section_name) const {
-  for (auto &[sections, properties] : *this->_parsed_data) {
-    if (sections == section_name)
-      return this->get_parsed_data().at(section_name);
-  }
-  return {};
-}
-
-std::optional<
-    std::reference_wrapper<std::unordered_map<std::string, std::string>>>
-parser::get_properties_of_section(const std::string &section_name) {
-  for (auto &[sections, properties] : *this->_parsed_data) {
-    if (sections == section_name)
-      return this->get_parsed_data().at(section_name);
-  }
-  return {};
-}
-
 void parser::pretty_print(void) const noexcept {
   for (auto &[sections, properties] : *this->_parsed_data) {
     std::cout << '[' << sections << ']' << std::endl;
@@ -176,7 +175,7 @@ void parser::pretty_print(void) const noexcept {
   }
 }
 
-void parser::write_to_file(const std::string &filename) {
+void parser::write_to_file(const std::string &filename) const {
   std::stringstream ss{};
   std::ofstream out_file{filename};
   for (auto &[sections, properties] : *this->_parsed_data) {

@@ -92,7 +92,7 @@ const std::optional<
 parser::get_properties_of_section(const std::string &section_name) const {
   for (auto &[sections, properties] : *this->_parsed_data) {
     if (sections == section_name)
-      return this->get_parsed_data().at(section_name);
+      return std::cref(this->get_parsed_data().at(section_name));
   }
   return {};
 }
@@ -102,7 +102,7 @@ std::optional<
 parser::get_properties_of_section(const std::string &section_name) {
   for (auto &[sections, properties] : *this->_parsed_data) {
     if (sections == section_name)
-      return this->get_parsed_data().at(section_name);
+      return std::ref(this->get_parsed_data().at(section_name));
   }
   return {};
 }

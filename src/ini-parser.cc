@@ -109,10 +109,9 @@ parser::get_properties_of_section(const std::string &section_name) {
 
 parser::parser(const std::string_view &in_file,
                comment_char comment_token = comment_char::SEMI_COL)
-    : _file_data(std::filesystem::file_size(in_file), '0'),
-      longest_key_width(0), _parsed_data(nullptr) {
+    : longest_key_width(0), _parsed_data(nullptr) {
   try {
-    if (this->check_file_extension(in_file))
+    if (parser::check_file_extension(in_file))
       this->_input_file.open(in_file.data(), std::ios::in);
     else
       throw std::runtime_error("File should be ended with .ini extension");
@@ -121,13 +120,14 @@ parser::parser(const std::string_view &in_file,
     if (std::filesystem::exists(file_path) != true &&
         std::filesystem::is_regular_file(file_path))
       throw std::runtime_error("File not exist or not regular file!");
-
-    this->_input_file.read(_file_data.data(),
-                           std::filesystem::file_size(in_file));
   } catch (std::runtime_error &e) {
     std::cerr << e.what() << std::endl;
+    std::exit(1);
   }
 
+  this->_file_data = std::string(std::filesystem::file_size(in_file), '0');
+  this->_input_file.read(_file_data.data(),
+                         std::filesystem::file_size(in_file));
   char comm_token;
   switch (comment_token) {
   case ini::comment_char::HASH_TAG:

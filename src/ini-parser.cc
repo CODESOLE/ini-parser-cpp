@@ -126,7 +126,7 @@ parser::parser(const std::string_view &in_file,
   }
 
   this->_file_data = std::string(std::filesystem::file_size(in_file), '0');
-  this->_input_file.read(_file_data.data(),
+  this->_input_file.read(this->_file_data.data(),
                          std::filesystem::file_size(in_file));
   char comm_token;
   switch (comment_token) {
@@ -138,7 +138,7 @@ parser::parser(const std::string_view &in_file,
     break;
   }
 
-  std::stringstream ss{_file_data};
+  std::stringstream ss{this->_file_data};
   parsed_data parsed{};
 
   for (std::string line{}; std::getline(ss, line, '\n');) {

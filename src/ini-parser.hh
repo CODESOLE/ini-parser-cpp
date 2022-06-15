@@ -58,7 +58,7 @@ private:
 };
 
 inline void parser::print_raw_string() const noexcept {
-  std::cout << _file_data << std::endl;
+  std::cout << this->_file_data << std::endl;
 }
 
 inline const parsed_data &parser::get_parsed_data(void) const noexcept {
@@ -70,7 +70,7 @@ inline parsed_data &parser::get_parsed_data(void) noexcept {
 }
 
 inline const std::string &parser::get_raw_string(void) const noexcept {
-  return _file_data;
+  return this->_file_data;
 }
 
 } // namespace ini

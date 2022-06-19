@@ -1,5 +1,5 @@
 # ini-parser-cpp
-INI parser written in Modern C++20.
+Single header-only INI parser written in Modern C++20.
 
  - Same sections will be merge with a warning written into a stderr.
 
@@ -17,16 +17,15 @@ You can find this example file in `example/main.cc`. This is the whole API.
 #include "ini-parser.hh"
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
-  // create ini::parser object with specified file location
-  // after opening file, parse with selected comment-char which is can be
-  // either ';' or '#'. It will ignore contents after that symbol.
-  // if you want to use comment-char inside properties you can define them with
+  // create ini::parser object with specified file location and with selected
+  // comment-char which is can be either ';' or '#'. It will ignore contents
+  // after that symbol. if you want to use comment-char inside properties you
+  // can define them with
   // \; or \# to tell the parser to not see them as a comment line
   // (e.g. format=jpg\;png\;gif ) see test/sample.ini file
   // ini::comment_char::HASH_TAG => '#'
   // ini::comment_char::SEMI_COL => ';'
-  ini::parser ini_file =
-      ini::parser("test/sample.ini", ini::comment_char::SEMI_COL);
+  ini::parser<ini::comment_char::SEMI_COL> ini_file("test/sample.ini");
 
   // print raw string that read from file
   ini_file.print_raw_string();

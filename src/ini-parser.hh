@@ -19,7 +19,8 @@ enum class comment_char : unsigned char { HASH_TAG = 0, SEMI_COL = 1 };
 using parsed_data =
     std::unordered_map<std::string,
                        std::unordered_map<std::string, std::string>>;
-template <comment_char cc = comment_char::SEMI_COL> class parser {
+
+template <comment_char cc = comment_char::SEMI_COL> class parser final {
 public:
   parser() = delete;
   parser(const std::string_view &in_file);
@@ -205,7 +206,7 @@ parser<cm>::parser(const std::string_view &in_file)
 
   this->file_data = std::string(std::filesystem::file_size(in_file), '0');
   this->input_file.read(this->file_data.data(),
-                         std::filesystem::file_size(in_file));
+                        std::filesystem::file_size(in_file));
   char comm_token;
   switch (cm) {
   case ini::comment_char::HASH_TAG:

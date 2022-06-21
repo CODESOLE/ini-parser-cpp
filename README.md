@@ -7,7 +7,7 @@ Single header-only INI parser written in Modern C++20.
 
  - However same keys in different sections are allowed.
 
-You can find this example file in `example/main.cc`. This is the whole API.
+You can find this example file in `example/main_semi.cc`. This is the whole API.
 
 ```cpp
 // Copyright (c) 2022 CODESOLE
@@ -25,7 +25,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   // (e.g. format=jpg\;png\;gif ) see test/sample.ini file
   // ini::comment_char::HASH_TAG => '#'
   // ini::comment_char::SEMI_COL => ';'
-  ini::parser<ini::comment_char::SEMI_COL> ini_file("test/sample.ini");
+  ini::parser<ini::comment_char::SEMI_COL> ini_file("test/sample_semi.ini");
 
   // print raw string that read from file
   ini_file.print_raw_string();

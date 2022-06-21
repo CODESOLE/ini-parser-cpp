@@ -11,6 +11,7 @@
 #include <memory>
 #include <optional>
 #include <unordered_map>
+#include <utility>
 
 namespace ini {
 
@@ -95,16 +96,14 @@ parser<cm>::parser(parser &&other)
     : input_file(std::move(other.input_file)),
       file_data(std::move(other.file_data)),
       longest_key_width(other.longest_key_width),
-      _parsed_data(std::move(other._parsed_data)) {
-  other._parsed_data = nullptr;
-}
+      _parsed_data(std::exchange(other._parsed_data, nullptr)) {}
 
 template <comment_char cm> parser<cm> &parser<cm>::operator=(parser &&other) {
   this->input_file = std::move(other.input_file);
   this->file_data = std::move(other.file_data);
   this->longest_key_width = other.longest_key_width;
-  this->_parsed_data = std::move(other._parsed_data);
-  other._parsed_data = nullptr;
+  this->_parsed_data = std::exchange(other._parsed_data, nullptr);
+
   return *this;
 }
 

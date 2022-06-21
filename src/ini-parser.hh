@@ -25,9 +25,9 @@ template <comment_char cc = comment_char::SEMI_COL> class parser final {
 public:
   parser() = delete;
   parser(const std::string_view &in_file);
-  parser(parser &&);
+  parser(parser &&) noexcept;
   parser(const parser &) = delete;
-  parser &operator=(parser &&);
+  parser &operator=(parser &&) noexcept;
   parser &operator=(const parser &) = delete;
   ~parser() = default;
 
@@ -92,17 +92,19 @@ inline bool parser<cm>::check_file_extension(const std::string_view &file) {
 }
 
 template <comment_char cm>
-parser<cm>::parser(parser &&other)
+parser<cm>::parser(parser &&other) noexcept
     : input_file(std::move(other.input_file)),
       file_data(std::move(other.file_data)),
       longest_key_width(other.longest_key_width),
       _parsed_data(std::exchange(other._parsed_data, nullptr)) {}
 
-template <comment_char cm> parser<cm> &parser<cm>::operator=(parser &&other) {
-  this->input_file = std::move(other.input_file);
-  this->file_data = std::move(other.file_data);
-  this->longest_key_width = other.longest_key_width;
-  this->_parsed_data = std::exchange(other._parsed_data, nullptr);
+template <comment_char cm> parser<cm> &parser<cm>::operator=(parser &&other) noexcept {
+  if (this != &other) {
+    this->input_file = std::move(other.input_file);
+    this->file_data = std::move(other.file_data);
+    this->longest_key_width = other.longest_key_width;
+    this->_parsed_data = std::exchange(other._parsed_data, nullptr);
+  }
 
   return *this;
 }

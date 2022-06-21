@@ -13,7 +13,7 @@ project "ini-parser-cpp"
   buildoptions { "-pedantic" }
   includedirs { "src" }
 
-  files { "example/**.cc" }
+  files { "example/main_hash.cc" }
 
   filter "configurations:Debug"
     defines { "DEBUG" }

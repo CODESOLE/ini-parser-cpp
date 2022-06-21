@@ -124,12 +124,12 @@ inline void parser<cm>::get_section(std::string line, parsed_data &pd) {
   if (*line.begin() == '[' && *(line.end() - 1) == ']') {
     this->is_root = false;
     this->curr_section = std::string(line.begin() + 1, line.end() - 1);
+    trim_line(this->curr_section);
     if (pd.contains(this->curr_section)) {
       std::cerr << "WARN: " << this->curr_section
                 << " is exist in section list! Skipping\n";
       return;
     }
-    trim_line(this->curr_section);
   }
 }
 
@@ -240,7 +240,7 @@ parser<cm>::parser(const std::string_view &in_file)
   }
   this->_parsed_data = std::make_unique<parsed_data>(parsed);
   this->is_root = true;
-  this->curr_section.clear();
+  this->curr_section = "root";
 }
 
 template <comment_char cm> void parser<cm>::pretty_print(void) const noexcept {
@@ -258,6 +258,16 @@ template <comment_char cm>
 void parser<cm>::write_to_file(const std::string &filename) const {
   std::stringstream ss{};
   std::ofstream out_file{filename};
+
+  if (this->_parsed_data->contains("root")) {
+    const auto &root = this->_parsed_data->at("root");
+    for (const auto &[key, val] : root) {
+      ss << key << " = " << val << std::endl;
+    }
+    ss << std::endl;
+    this->_parsed_data->erase("root");
+  }
+
   for (auto &[sections, properties] : *this->_parsed_data) {
     ss << '[' << sections << ']' << std::endl;
     for (auto &[key, val] : properties) {

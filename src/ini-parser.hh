@@ -98,7 +98,8 @@ parser<cm>::parser(parser &&other) noexcept
       longest_key_width(other.longest_key_width),
       _parsed_data(std::exchange(other._parsed_data, nullptr)) {}
 
-template <comment_char cm> parser<cm> &parser<cm>::operator=(parser &&other) noexcept {
+template <comment_char cm>
+parser<cm> &parser<cm>::operator=(parser &&other) noexcept {
   if (this != &other) {
     this->input_file = std::move(other.input_file);
     this->file_data = std::move(other.file_data);

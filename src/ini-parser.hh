@@ -15,13 +15,13 @@
 
 namespace ini {
 
-enum class comment_char : unsigned char { HASH_TAG = 0, SEMI_COL = 1 };
+enum class comment_char : unsigned char { hash_tag = 0, semi_col = 1 };
 
 using parsed_data =
     std::unordered_map<std::string,
                        std::unordered_map<std::string, std::string>>;
 
-template <comment_char cc = comment_char::SEMI_COL> class parser final {
+template <comment_char cc = comment_char::semi_col> class parser final {
 public:
   parser() = delete;
   parser(const std::string_view &in_file);
@@ -211,10 +211,10 @@ parser<cm>::parser(const std::string_view &in_file)
                         std::filesystem::file_size(in_file));
   char comm_token;
   switch (cm) {
-  case ini::comment_char::HASH_TAG:
+  case ini::comment_char::hash_tag:
     comm_token = '#';
     break;
-  case ini::comment_char::SEMI_COL:
+  case ini::comment_char::semi_col:
     comm_token = ';';
     break;
   }

@@ -23,9 +23,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   // can define them with
   // \; or \# to tell the parser to not see them as a comment line
   // (e.g. format=jpg\;png\;gif ) see test/sample.ini file
-  // ini::comment_char::HASH_TAG => '#'
-  // ini::comment_char::SEMI_COL => ';'
-  ini::parser<ini::comment_char::SEMI_COL> ini_file("test/sample_semi.ini");
+  // ini::comment_char::hash_tag => '#'
+  // ini::comment_char::semi_col => ';'
+  ini::parser<ini::comment_char::semi_col> ini_file("test/sample_semi.ini");
 
   // print raw string that read from file
   ini_file.print_raw_string();

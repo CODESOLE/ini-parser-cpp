@@ -26,6 +26,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   // ini::comment_char::hash_tag => '#'
   // ini::comment_char::semi_col => ';'
   ini::parser<ini::comment_char::semi_col> ini_file("test/sample_semi.ini");
+  //ini::parser<ini::comment_char::hash_tag> ini_file("test/sample_hash.ini");
 
   // print raw string that read from file
   ini_file.print_raw_string();

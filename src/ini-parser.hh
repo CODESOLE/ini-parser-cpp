@@ -35,6 +35,9 @@ public:
   inline const std::string &get_raw_string(void) const noexcept;
   void pretty_print(void) const noexcept;
   void write_to_file(const std::string &filename) const;
+  void write_to_stringstream(std::stringstream &ss);
+  template <comment_char c>
+  friend std::ostream &operator<<(std::ostream &os, const parser<c> &p);
 
   [[nodiscard("Parsed data should be used!")]] inline const parsed_data &
   get_parsed_data(void) const noexcept;
@@ -65,6 +68,19 @@ private:
   [[nodiscard("You have to check file extension!")]] static inline bool
   check_file_extension(const std::string_view &file);
 };
+
+template <comment_char c>
+std::ostream &operator<<(std::ostream &os, const parser<c> &p) {
+  for (auto &[sections, properties] : *p._parsed_data) {
+    os << '[' << sections << ']' << std::endl;
+    for (auto &[key, val] : properties) {
+      os << '\t' << std::setw(p.longest_key_width) << key << " = " << val
+         << std::endl;
+    }
+    os << std::endl;
+  }
+  return os;
+}
 
 template <comment_char cm>
 inline void parser<cm>::print_raw_string() const noexcept {
@@ -129,7 +145,7 @@ inline void parser<cm>::get_section(std::string line, parsed_data &pd) {
     trim_line(this->curr_section);
     if (pd.contains(this->curr_section)) {
       std::cerr << "WARN: " << this->curr_section
-                << " is exist in section list! Skipping\n";
+                << " is already exist in section list! Skipping\n";
       return;
     }
   }
@@ -148,15 +164,15 @@ std::optional<std::uint16_t> parser<cm>::get_property(std::string line,
     if (this->is_root) {
       if (pd[this->curr_section].contains(key)) {
         std::cerr << "WARN: " << key
-                  << " is exist in [root] section! Skipping\n";
+                  << " is already exist in [root] section! Skipping\n";
         return {};
       }
       pd[this->curr_section][key] = val;
       return key.size();
     } else {
       if (pd[this->curr_section].contains(key)) {
-        std::cerr << "WARN: " << key << " is exist in [" << this->curr_section
-                  << "] section! Skipping\n";
+        std::cerr << "WARN: " << key << " is already exist in ["
+                  << this->curr_section << "] section! Skipping\n";
         return {};
       }
       pd[this->curr_section][key] = val;
@@ -240,12 +256,33 @@ parser<cm>::parser(const std::string_view &in_file)
     if (key_sz.has_value() && key_sz > this->longest_key_width)
       this->longest_key_width = key_sz.value();
   }
-  this->_parsed_data = std::make_unique<parsed_data>(parsed);
+
+  try {
+    if (parsed.empty()) {
+      throw std::runtime_error("ini file content is invalid");
+    } else {
+      this->_parsed_data = std::make_unique<parsed_data>(parsed);
+    }
+  } catch (std::runtime_error &e) {
+    std::cerr << e.what() << std::endl;
+    std::exit(1);
+  }
+
   this->is_root = true;
   this->curr_section = "root";
 }
 
 template <comment_char cm> void parser<cm>::pretty_print(void) const noexcept {
+  if (this->_parsed_data->contains("root")) {
+    const auto &root = this->_parsed_data->at("root");
+    for (const auto &[key, val] : root) {
+      std::cout << '\t' << std::setw(this->longest_key_width) << key << " = "
+                << val << std::endl;
+    }
+    std::cout << std::endl;
+    this->_parsed_data->erase("root");
+  }
+
   for (auto &[sections, properties] : *this->_parsed_data) {
     std::cout << '[' << sections << ']' << std::endl;
     for (auto &[key, val] : properties) {
@@ -253,6 +290,26 @@ template <comment_char cm> void parser<cm>::pretty_print(void) const noexcept {
                 << val << std::endl;
     }
     std::cout << std::endl;
+  }
+}
+
+template <comment_char cm>
+void parser<cm>::write_to_stringstream(std::stringstream &ss) {
+  if (this->_parsed_data->contains("root")) {
+    const auto &root = this->_parsed_data->at("root");
+    for (const auto &[key, val] : root) {
+      ss << key << " = " << val << std::endl;
+    }
+    ss << std::endl;
+    this->_parsed_data->erase("root");
+  }
+
+  for (auto &[sections, properties] : *this->_parsed_data) {
+    ss << '[' << sections << ']' << std::endl;
+    for (auto &[key, val] : properties) {
+      ss << key << " = " << val << std::endl;
+    }
+    ss << std::endl;
   }
 }
 

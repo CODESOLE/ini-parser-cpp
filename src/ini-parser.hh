@@ -108,14 +108,14 @@ inline bool parser<cm>::check_file_extension(const std::string_view &file) {
 }
 
 template <comment_char cm>
-parser<cm>::parser(parser &&other) noexcept
+parser<cm>::parser(parser<cm> &&other) noexcept
     : input_file(std::move(other.input_file)),
       file_data(std::move(other.file_data)),
       longest_key_width(other.longest_key_width),
       _parsed_data(std::exchange(other._parsed_data, nullptr)) {}
 
 template <comment_char cm>
-parser<cm> &parser<cm>::operator=(parser &&other) noexcept {
+parser<cm> &parser<cm>::operator=(parser<cm> &&other) noexcept {
   if (this != &other) {
     this->input_file = std::move(other.input_file);
     this->file_data = std::move(other.file_data);

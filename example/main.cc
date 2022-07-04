@@ -15,6 +15,16 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   // ini::comment_char::SEMI_COL => ';'
   ini::parser<ini::comment_char::semi_col> ini_file("test/sample_semi.ini");
   // ini::parser<ini::comment_char::hash_tag> ini_file("test/sample_hash.ini");
+
+  std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
+  std::cout << "0)PRINT DIRECTLY INTO STDOUT WITH STD::COUT <<" << std::endl;
+  std::cout << ini_file;
+  std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+            << std::endl
+            << std::endl
+            << std::endl
+            << std::endl;
+
   std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
   std::cout << "1)PRINT RAW STRING" << std::endl;
   // print raw string that read from file
@@ -97,6 +107,18 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
     for (auto &[key, val] : non_const_http_section)
       std::cout << key << " = " << val << std::endl;
   }
+  std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+            << std::endl
+            << std::endl
+            << std::endl
+            << std::endl;
+
+  std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
+  std::cout << "7)DUMP PARSED DATA INTO STRINGSTREAM" << std::endl;
+  // write parsed data into stringstream
+  std::stringstream ss{};
+  ini_file.write_to_stringstream(ss);
+  std::cout << ss.rdbuf();
   std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
             << std::endl
             << std::endl

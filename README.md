@@ -31,6 +31,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   // print raw string that read from file
   ini_file.print_raw_string();
 
+  // print directly into stdout with std::cout overload
+  std::cout << ini_file;
+
   // print parsed elements in a pretty way
   ini_file.pretty_print();
 
@@ -57,6 +60,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
 
   // write parsed/modified data structure into a new .ini file
   ini_file.write_to_file("with_new_edited_port.ini");
+
+  // dump parsed data into stringstream
+  std::stringstream ss{};
+  ini_file.write_to_stringstream(ss);
 
   // const reference
   if (ini_file.get_properties_of_section("http").has_value()) {

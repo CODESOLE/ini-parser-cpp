@@ -33,7 +33,6 @@ public:
 
   inline void print_raw_string(void) const noexcept;
   inline const std::string &get_raw_string(void) const noexcept;
-  void pretty_print(void) const noexcept;
   void write_to_file(const std::string &filename) const;
   void write_to_stringstream(std::stringstream &ss);
   template <comment_char c>
@@ -71,7 +70,19 @@ private:
 
 template <comment_char c>
 std::ostream &operator<<(std::ostream &os, const parser<c> &p) {
+  if (p._parsed_data->contains("root")) {
+    const auto &root = p._parsed_data->at("root");
+    for (const auto &[key, val] : root) {
+      os << '\t' << std::setw(p.longest_key_width) << key << " = " << val
+         << std::endl;
+    }
+    os << std::endl;
+  }
+
   for (auto &[sections, properties] : *p._parsed_data) {
+    if (sections == "root")
+      continue;
+
     os << '[' << sections << ']' << std::endl;
     for (auto &[key, val] : properties) {
       os << '\t' << std::setw(p.longest_key_width) << key << " = " << val
@@ -241,19 +252,15 @@ parser<cm>::parser(const std::string_view &in_file)
   for (std::string line{}; std::getline(ss, line, '\n');) {
     std::string::size_type idx = line.find(comm_token);
     if (idx != std::string::npos) {
-      if (line[idx - 1] != '\\') {
-        line[idx] = '\0';
-        line = std::string(line.c_str());
-      } else {
-        line.erase(std::remove(line.begin(), line.end(), '\\'), line.end());
-      }
+      line[idx] = '\0';
+      line = std::string(line.c_str());
     }
 
     trim_line(line);
     get_section(line, parsed);
 
     std::optional<std::uint16_t> key_sz = get_property(line, parsed);
-    if (key_sz.has_value() && key_sz > this->longest_key_width)
+    if (key_sz.has_value() && key_sz.value() > this->longest_key_width)
       this->longest_key_width = key_sz.value();
   }
 
@@ -272,27 +279,6 @@ parser<cm>::parser(const std::string_view &in_file)
   this->curr_section = "root";
 }
 
-template <comment_char cm> void parser<cm>::pretty_print(void) const noexcept {
-  if (this->_parsed_data->contains("root")) {
-    const auto &root = this->_parsed_data->at("root");
-    for (const auto &[key, val] : root) {
-      std::cout << '\t' << std::setw(this->longest_key_width) << key << " = "
-                << val << std::endl;
-    }
-    std::cout << std::endl;
-    this->_parsed_data->erase("root");
-  }
-
-  for (auto &[sections, properties] : *this->_parsed_data) {
-    std::cout << '[' << sections << ']' << std::endl;
-    for (auto &[key, val] : properties) {
-      std::cout << '\t' << std::setw(this->longest_key_width) << key << " = "
-                << val << std::endl;
-    }
-    std::cout << std::endl;
-  }
-}
-
 template <comment_char cm>
 void parser<cm>::write_to_stringstream(std::stringstream &ss) {
   if (this->_parsed_data->contains("root")) {
@@ -301,10 +287,12 @@ void parser<cm>::write_to_stringstream(std::stringstream &ss) {
       ss << key << " = " << val << std::endl;
     }
     ss << std::endl;
-    this->_parsed_data->erase("root");
   }
 
   for (auto &[sections, properties] : *this->_parsed_data) {
+    if (sections == "root")
+      continue;
+
     ss << '[' << sections << ']' << std::endl;
     for (auto &[key, val] : properties) {
       ss << key << " = " << val << std::endl;
@@ -324,10 +312,12 @@ void parser<cm>::write_to_file(const std::string &filename) const {
       ss << key << " = " << val << std::endl;
     }
     ss << std::endl;
-    this->_parsed_data->erase("root");
   }
 
   for (auto &[sections, properties] : *this->_parsed_data) {
+    if (sections == "root")
+      continue;
+
     ss << '[' << sections << ']' << std::endl;
     for (auto &[key, val] : properties) {
       ss << key << " = " << val << std::endl;

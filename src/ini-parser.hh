@@ -165,7 +165,7 @@ inline void parser<cm>::get_section(std::string line, parsed_data &pd) {
 template <comment_char cm>
 std::optional<std::uint16_t> parser<cm>::get_property(std::string line,
                                                       parsed_data &pd) {
-  std::string::size_type equal_symbol = line.find("=");
+  std::string::size_type equal_symbol = line.find('=');
 
   if (equal_symbol != std::string::npos) {
     std::string key = std::string(line.begin(), line.begin() + equal_symbol);

@@ -19,10 +19,7 @@ You can find this example file in `example/main_semi.cc`. This is the whole API.
 int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   // create ini::parser object with specified file location and with selected
   // comment-char which is can be either ';' or '#'. It will ignore contents
-  // after that symbol. if you want to use comment-char inside properties you
-  // can define them with
-  // \; or \# to tell the parser to not see them as a comment line
-  // (e.g. format=jpg\;png\;gif ) see test/sample.ini file
+  // after that symbol.
   // ini::comment_char::hash_tag => '#'
   // ini::comment_char::semi_col => ';'
   ini::parser<ini::comment_char::semi_col> ini_file("test/sample_semi.ini");
@@ -33,9 +30,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
 
   // print directly into stdout with std::cout overload
   std::cout << ini_file;
-
-  // print parsed elements in a pretty way
-  ini_file.pretty_print();
 
   // get raw string that read from file
   const auto &raw_str = ini_file.get_raw_string();

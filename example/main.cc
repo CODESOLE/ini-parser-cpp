@@ -7,10 +7,7 @@
 int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   // create ini::parser object with specified file location and with selected
   // comment-char which is can be either ';' or '#'. It will ignore contents
-  // after that symbol. if you want to use comment-char inside properties you
-  // can define them with
-  // \; or \# to tell the parser to not see them as a comment line
-  // (e.g. format=jpg\;png\;gif ) see test/sample.ini file
+  // after that symbol.
   // ini::comment_char::HASH_TAG => '#'
   // ini::comment_char::SEMI_COL => ';'
   ini::parser<ini::comment_char::semi_col> ini_file("test/sample_semi.ini");
@@ -35,16 +32,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
             << std::endl
             << std::endl;
 
-  std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
-  std::cout << "2)PRETTY PRINT" << std::endl;
-  // print parsed elements in a pretty way
-  ini_file.pretty_print();
-  std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
-            << std::endl
-            << std::endl
-            << std::endl
-            << std::endl;
-
   // get raw string that read from file
   [[maybe_unused]] const auto &raw_str = ini_file.get_raw_string();
   // std::cout << raw_str << std::endl;
@@ -60,7 +47,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   ini::parsed_data &non_const_ref = ini_file.get_parsed_data();
 
   std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
-  std::cout << "3)ACCESSING SPECIFIC SECTION -> PROPERTY" << std::endl;
+  std::cout << "2)ACCESSING SPECIFIC SECTION -> PROPERTY" << std::endl;
   // accessing at specific section and specific property (e.g http -> port)
   std::cout << const_ref.at("http").at("port") << std::endl;
   std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
@@ -70,7 +57,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
             << std::endl;
 
   std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
-  std::cout << "4)MODIFYING SPECIFIC SECTION -> PROPERTY" << std::endl;
+  std::cout << "3)MODIFYING SPECIFIC SECTION -> PROPERTY" << std::endl;
   // modifying parsed element
   non_const_ref.at("http").at("port") = "3443";
   std::cout << const_ref.at("http").at("port") << std::endl;
@@ -84,7 +71,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   ini_file.write_to_file("with_new_edited_port.ini");
 
   std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
-  std::cout << "5)get_properties_of_section (const version)" << std::endl;
+  std::cout << "4)get_properties_of_section (const version)" << std::endl;
   // const reference
   if (ini_file.get_properties_of_section("http").has_value()) {
     const auto &const_http_section =
@@ -99,7 +86,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
             << std::endl;
 
   std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
-  std::cout << "6)get_properties_of_section (non-const version)" << std::endl;
+  std::cout << "5)get_properties_of_section (non-const version)" << std::endl;
   // non-const reference
   if (ini_file.get_properties_of_section("http").has_value()) {
     auto &non_const_http_section =
@@ -114,7 +101,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
             << std::endl;
 
   std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
-  std::cout << "7)DUMP PARSED DATA INTO STRINGSTREAM" << std::endl;
+  std::cout << "6)DUMP PARSED DATA INTO STRINGSTREAM" << std::endl;
   // write parsed data into stringstream
   std::stringstream ss{};
   ini_file.write_to_stringstream(ss);

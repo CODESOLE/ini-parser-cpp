@@ -150,7 +150,7 @@ template <comment_char cm> void parser<cm>::trim_line(std::string &line) {
 
 template <comment_char cm>
 inline void parser<cm>::get_section(std::string line, parsed_data &pd) {
-  if (*line.begin() == '[' && *(line.end() - 1) == ']') {
+  if (line.starts_with('[') && line.ends_with(']')) {
     this->is_root = false;
     this->curr_section = std::string(line.begin() + 1, line.end() - 1);
     trim_line(this->curr_section);

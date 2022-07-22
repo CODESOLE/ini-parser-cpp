@@ -1,5 +1,5 @@
 // Copyright (c) 2022 CODESOLE
-// ini-parser.hh: ini-parser declarations
+// ini-parser.hh: ini-parser declaration & implementation file
 // SPDX-License-Identifier: MIT
 
 #pragma once

@@ -6,7 +6,7 @@
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   // create ini::parser object with specified file location and with selected
-  // comment-char which is can be either ';' or '#'. It will ignore contents
+  // comment-char which can be either ';' or '#'. It will ignore contents
   // after that symbol.
   // ini::comment_char::HASH_TAG => '#'
   // ini::comment_char::SEMI_COL => ';'

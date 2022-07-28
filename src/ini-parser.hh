@@ -176,7 +176,7 @@ std::optional<std::uint16_t> parser<cm>::get_property(std::string line,
       if (pd[this->curr_section].contains(key)) {
         std::cerr << "WARN: " << key
                   << " is already exist in [root] section! Skipping\n";
-        return {};
+        return std::nullopt;
       }
       pd[this->curr_section][key] = val;
       return key.size();
@@ -184,13 +184,13 @@ std::optional<std::uint16_t> parser<cm>::get_property(std::string line,
       if (pd[this->curr_section].contains(key)) {
         std::cerr << "WARN: " << key << " is already exist in ["
                   << this->curr_section << "] section! Skipping\n";
-        return {};
+        return std::nullopt;
       }
       pd[this->curr_section][key] = val;
       return key.size();
     }
   }
-  return {};
+  return std::nullopt;
 }
 
 template <comment_char cm>
@@ -201,7 +201,7 @@ parser<cm>::get_properties_of_section(const std::string &section_name) const {
     if (sections == section_name)
       return std::cref(this->get_parsed_data().at(section_name));
   }
-  return {};
+  return std::nullopt;
 }
 
 template <comment_char cm>
@@ -212,7 +212,7 @@ parser<cm>::get_properties_of_section(const std::string &section_name) {
     if (sections == section_name)
       return std::ref(this->get_parsed_data().at(section_name));
   }
-  return {};
+  return std::nullopt;
 }
 
 template <comment_char cm>

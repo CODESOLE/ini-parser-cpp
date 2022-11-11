@@ -79,12 +79,12 @@ std::ostream &operator<<(std::ostream &os, const parser<c> &p) {
     os << std::endl;
   }
 
-  for (auto &[sections, properties] : *p._parsed_data) {
+  for (const auto &[sections, properties] : *p._parsed_data) {
     if (sections == "root")
       continue;
 
     os << '[' << sections << ']' << std::endl;
-    for (auto &[key, val] : properties) {
+    for (const auto &[key, val] : properties) {
       os << '\t' << std::setw(p.longest_key_width) << key << " = " << val
          << std::endl;
     }
@@ -197,7 +197,7 @@ template <comment_char cm>
 const std::optional<
     std::reference_wrapper<const std::unordered_map<std::string, std::string>>>
 parser<cm>::get_properties_of_section(const std::string &section_name) const {
-  for (auto &[sections, properties] : *this->_parsed_data) {
+  for (const auto &[sections, properties] : *this->_parsed_data) {
     if (sections == section_name)
       return std::cref(this->get_parsed_data().at(section_name));
   }
@@ -289,12 +289,12 @@ void parser<cm>::write_to_stringstream(std::stringstream &ss) {
     ss << std::endl;
   }
 
-  for (auto &[sections, properties] : *this->_parsed_data) {
+  for (const auto &[sections, properties] : *this->_parsed_data) {
     if (sections == "root")
       continue;
 
     ss << '[' << sections << ']' << std::endl;
-    for (auto &[key, val] : properties) {
+    for (const auto &[key, val] : properties) {
       ss << key << " = " << val << std::endl;
     }
     ss << std::endl;
@@ -314,12 +314,12 @@ void parser<cm>::write_to_file(const std::string &filename) const {
     ss << std::endl;
   }
 
-  for (auto &[sections, properties] : *this->_parsed_data) {
+  for (const auto &[sections, properties] : *this->_parsed_data) {
     if (sections == "root")
       continue;
 
     ss << '[' << sections << ']' << std::endl;
-    for (auto &[key, val] : properties) {
+    for (const auto &[key, val] : properties) {
       ss << key << " = " << val << std::endl;
     }
     ss << std::endl;
